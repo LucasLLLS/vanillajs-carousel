@@ -4,20 +4,49 @@ function setCarousel() {
         carouselItemsNumber = carouselItems.length,
         carouselWrapper = document.querySelector('.vanillajs-carousel'),
         carouselButtons = document.querySelectorAll('.vanillajs-carousel-controls'),
-        bodyWidth = carouselWrapper.offsetWidth,
+        bodyWidth = document.body.offsetWidth,
         carouselBulletsWrapper = document.querySelector('.vanillajs-carousel-bullets');
+
+    var setSlide = function (targetElement, slide) {
+        var activeElement = document.querySelector('.vanillajs-carousel .item.active');
+
+        targetElement.classList.add('active');
+        activeElement.classList.remove('active');
+        carouselWrapper.style.transform = 'translate(' + ((bodyWidth * slide) * -1) + 'px)';
+        carouselWrapper.dataset.slide = slide;
+        setBullet(slide);
+    }
+
+    var setBullet = function (index) {
+        var eqBulletElement = document.querySelector('.vanillajs-carousel-bullet-' + index);
+
+        if (document.querySelector('.vanillajs-carousel-bullets a.active')) {
+            document.querySelector('.vanillajs-carousel-bullets a.active').classList.remove('active');
+        }
+
+        eqBulletElement.classList.add('active')
+    }
 
     carouselWrapper.style.width = (bodyWidth * carouselItemsNumber) + 'px';
 
-    for (i = 0; i < carouselItemsNumber.length; i++) {
+    for (i = 0; i < carouselItemsNumber; i++) {
         var bullet = document.createElement('a');
+        bullet.dataset.slide = i;
 
-        console.log(' AQUI ');
+        bullet.classList.add('vanillajs-carousel-bullet-' + i);
+        if (i === 0) bullet.classList.add('active');
 
         bullet.addEventListener('click', function (e) {
             e.preventDefault();
-            targetElement = carouselItems[i];
-            newTranslate = (bodyWidth * i) * -1;
+            e.stopImmediatePropagation();
+            var targetIndex = this.dataset.slide;
+            var targetElement;
+            var newTranslate;
+            var activeElement = document.querySelector('.vanillajs-carousel .item.active');
+
+            targetElement = carouselItems[targetIndex];
+
+            setSlide(targetElement, targetIndex);
         });
         carouselBulletsWrapper.appendChild(bullet);
     }
@@ -28,33 +57,30 @@ function setCarousel() {
             var targetElement;
             var newTranslate;
             var action = this.dataset.control;
-            var currTranslate = parseInt(carouselWrapper.dataset.translate);
+            var currSlide = parseInt(carouselWrapper.dataset.slide);
             var activeElement = document.querySelector('.vanillajs-carousel .item.active');
 
             if (action === 'next') {
                 if (activeElement.nextElementSibling) {
                     targetElement = activeElement.nextElementSibling;
-                    newTranslate = (currTranslate - bodyWidth);
+                    slide = currSlide + 1;
                 } else {
                     targetElement = carouselItems[0];
-                    newTranslate = 0;
+                    slide = 0;
                 }
             }
 
             if (action === 'prev') {
                 if (activeElement.previousElementSibling) {
                     targetElement = activeElement.previousElementSibling;
-                    newTranslate = (currTranslate + bodyWidth);
+                    slide = currSlide - 1;
                 } else {
                     targetElement = carouselItems[carouselItemsNumber - 1];
-                    newTranslate = (bodyWidth * (carouselItemsNumber - 1)) * -1;
+                    slide = (carouselItemsNumber - 1)
                 }
             }
 
-            targetElement.classList.add('active');
-            activeElement.classList.remove('active');
-            carouselWrapper.style.transform = 'translate(' + (newTranslate) + 'px)';
-            carouselWrapper.dataset.translate = newTranslate;
+            setSlide(targetElement, slide);
         });
     }
 }

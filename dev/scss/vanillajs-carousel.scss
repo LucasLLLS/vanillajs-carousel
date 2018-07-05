@@ -8,8 +8,11 @@
         margin: 2px;
         background: rgba(0, 0, 0, .3);
         transition: all linear .3s;
+        border: 2px solid #000;
+        display: inline-block;
+        cursor: pointer;
 
-        a:hover {
+        &:hover , &.active{
             background: #fff;
         }
     }
