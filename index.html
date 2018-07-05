@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>VanillaJS Carousel</title>
+    <link rel="stylesheet" href="vanillajs-carousel.css">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="vanillajs-carousel" data-translate="0">
+        <div class="item active" style="background: #000055"></div>
+        <div class="item" style="background: #660000"></div>
+        <div class="item" style="background: #004400"></div>
+        <div class="item" style="background: #aa00aa"></div>
+    </div>
+
+    <div class="vanillajs-carousel-bullets"></div>
+
+    <div class="vanillajs-carousel-controls">
+        <a href="#" class="vanillajs-carousel-controls" data-control="prev">
+            < Anterior</a>
+        <a href="#" class="vanillajs-carousel-controls" data-control="next">Próximo ></a>
+    </div>
+
+    <script src="vanillajs-carousel.js"></script>
+    <script>
+        setCarousel();
+    </script>
+</body>
+</html>
