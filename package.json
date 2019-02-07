@@ -1,0 +1,25 @@
+{
+  "name": "vanillajs-carousel",
+  "version": "1.0.0",
+  "description": "A useful carousel with vanilla JS",
+  "main": "vanillajs-carousel.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "live-server && babel dev/js/source.js --out-file dist/vanilla-carousel.js --presets=es2015 --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LucasLLLS/vanillajs-carousel.git"
+  },
+  "author": "LucasLLLS",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LucasLLLS/vanillajs-carousel/issues"
+  },
+  "homepage": "https://github.com/LucasLLLS/vanillajs-carousel#readme",
+  "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1"
+  }
+}

@@ -1,4 +1,0 @@
-* Improve project folders structure
-* Install Grunt in project
-    * Create task to uglify JS code
-    * Create task to compile Saas code and minify generated CSS

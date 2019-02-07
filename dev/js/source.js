@@ -1,31 +1,33 @@
-function setCarousel() {
+let slide;
+const carouselItems = document.querySelectorAll('.vanillajs-carousel .item'),
+    carouselItemsNumber = carouselItems.length,
+    carouselWrapper = document.querySelector('.vanillajs-carousel'),
+    carouselButtons = document.querySelectorAll('.vanillajs-carousel-controls'),
+    bodyWidth = document.body.offsetWidth,
+    carouselBulletsWrapper = document.querySelector('.vanillajs-carousel-bullets');
+
+const setSlide = (targetElement, slide) => {
+    var activeElement = document.querySelector('.vanillajs-carousel .item.active');
+
+    targetElement.classList.add('active');
+    activeElement.classList.remove('active');
+    carouselWrapper.style.transform = 'translate(' + ((bodyWidth * slide) * -1) + 'px)';
+    carouselWrapper.dataset.slide = slide;
+    setBullet(slide);
+}
+
+const setBullet = (index) => {
+    var eqBulletElement = document.querySelector('.vanillajs-carousel-bullet-' + index);
+
+    if (document.querySelector('.vanillajs-carousel-bullets a.active')) {
+        document.querySelector('.vanillajs-carousel-bullets a.active').classList.remove('active');
+    }
+
+    eqBulletElement.classList.add('active')
+}
+
+const setCarousel = () => {
     var i;
-    const carouselItems = document.querySelectorAll('.vanillajs-carousel .item'),
-        carouselItemsNumber = carouselItems.length,
-        carouselWrapper = document.querySelector('.vanillajs-carousel'),
-        carouselButtons = document.querySelectorAll('.vanillajs-carousel-controls'),
-        bodyWidth = document.body.offsetWidth,
-        carouselBulletsWrapper = document.querySelector('.vanillajs-carousel-bullets');
-
-    var setSlide = function (targetElement, slide) {
-        var activeElement = document.querySelector('.vanillajs-carousel .item.active');
-
-        targetElement.classList.add('active');
-        activeElement.classList.remove('active');
-        carouselWrapper.style.transform = 'translate(' + ((bodyWidth * slide) * -1) + 'px)';
-        carouselWrapper.dataset.slide = slide;
-        setBullet(slide);
-    }
-
-    var setBullet = function (index) {
-        var eqBulletElement = document.querySelector('.vanillajs-carousel-bullet-' + index);
-
-        if (document.querySelector('.vanillajs-carousel-bullets a.active')) {
-            document.querySelector('.vanillajs-carousel-bullets a.active').classList.remove('active');
-        }
-
-        eqBulletElement.classList.add('active')
-    }
 
     carouselWrapper.style.width = (bodyWidth * carouselItemsNumber) + 'px';
 
@@ -54,6 +56,7 @@ function setCarousel() {
     for (i = 0; i < carouselButtons.length; i++) {
         carouselButtons[i].addEventListener('click', function (e) {
             e.preventDefault();
+            e.stopPropagation();
             var targetElement;
             var newTranslate;
             var action = this.dataset.control;
