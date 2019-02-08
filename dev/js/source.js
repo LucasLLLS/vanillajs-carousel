@@ -2,12 +2,12 @@
 const vanilla = {
     bodyWidth: document.body.offsetWidth,
     slide: null,
-    carouselItems: document.querySelectorAll('.vanillajs-carousel .item'),
-    carouselWrapper: document.querySelector('.vanillajs-carousel'),
-    carouselButtons: document.querySelectorAll('.vanillajs-carousel-controls'),
-    carouselBulletsWrapper: document.querySelector('.vanillajs-carousel-bullets'),
-    carouselItemsNumber() {
-        return this.carouselItems.length;
+    items: document.querySelectorAll('.vanillajs-carousel .item'),
+    wrapper: document.querySelector('.vanillajs-carousel'),
+    buttons: document.querySelectorAll('.vanillajs-carousel-controls a'),
+    bulletsWrapper: document.querySelector('.vanillajs-carousel-bullets'),
+    itemsNumber() {
+        return this.items.length;
     },
     setBullet(index) {
         const eqBulletElement = document.querySelector('.vanillajs-carousel-bullet-' + index);
@@ -23,15 +23,12 @@ const vanilla = {
 
         target.classList.add('active');
         activeElement.classList.remove('active');
-        this.carouselWrapper.style.transform = `translate(${(this.bodyWidth * slide) * -1}px)`;
-        this.carouselWrapper.dataset.slide = slide;
+        this.wrapper.style.transform = `translate(${(this.bodyWidth * slide) * -1}px)`;
+        this.wrapper.dataset.slide = slide;
         this.setBullet(slide);
     },
-    setCarousel() {
-
-        this.carouselWrapper.style.width = (`${this.bodyWidth * this.carouselItemsNumber()}px`);
-
-        Object.entries(this.carouselItems).map(([key]) => {
+    setBullets() {
+        Object.entries(this.items).map(([key]) => {
             const bullet = document.createElement('a');
             bullet.dataset.slide = key;
             bullet.classList.add(`vanillajs-carousel-bullet-${key}`);
@@ -44,20 +41,21 @@ const vanilla = {
                 const targetIndex = e.srcElement.dataset.slide;
                 const activeElement = document.querySelector('.vanillajs-carousel .item.active');
 
-                targetElement = this.carouselItems[targetIndex];
+                targetElement = this.items[targetIndex];
 
                 this.setSlide(targetElement, targetIndex);
             });
-            this.carouselBulletsWrapper.appendChild(bullet);
+            this.bulletsWrapper.appendChild(bullet);
         });
-
-        Object.entries(this.carouselButtons).map(([key, button]) => {
+    },
+    setButtons() {
+        Object.entries(this.buttons).map(([key, button]) => {
             button.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 let targetElement;
                 const action = button.dataset.control;
-                const currSlide = parseInt(this.carouselWrapper.dataset.slide);
+                const currSlide = parseInt(this.wrapper.dataset.slide);
                 const activeElement = document.querySelector('.vanillajs-carousel .item.active');
 
                 if (action === 'next') {
@@ -65,7 +63,7 @@ const vanilla = {
                         targetElement = activeElement.nextElementSibling;
                         this.slide = currSlide + 1;
                     } else {
-                        targetElement = this.carouselItems[0];
+                        targetElement = this.items[0];
                         this.slide = 0;
                     }
                 }
@@ -75,13 +73,25 @@ const vanilla = {
                         targetElement = activeElement.previousElementSibling;
                         this.slide = currSlide - 1;
                     } else {
-                        targetElement = this.carouselItems[this.carouselItemsNumber - 1];
-                        this.slide = (this.carouselItemsNumber - 1)
+                        targetElement = this.items[this.itemsNumber - 1];
+                        this.slide = (this.itemsNumber - 1);
                     }
                 }
 
                 this.setSlide(targetElement, this.slide);
             });
         });
+    },
+    setCarousel(params) {
+
+        this.wrapper.style.width = (`${this.bodyWidth * this.itemsNumber()}px`);
+
+        if (!params || params.bullets || typeof params.bullets === 'undefined') {
+            this.setBullets();
+        };
+
+        if (!params || !params.customButtons) {
+            this.setButtons();
+        }
     },
 };
