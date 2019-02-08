@@ -1,89 +1,87 @@
-let slide;
-const carouselItems = document.querySelectorAll('.vanillajs-carousel .item'),
-    carouselItemsNumber = carouselItems.length,
-    carouselWrapper = document.querySelector('.vanillajs-carousel'),
-    carouselButtons = document.querySelectorAll('.vanillajs-carousel-controls'),
-    bodyWidth = document.body.offsetWidth,
-    carouselBulletsWrapper = document.querySelector('.vanillajs-carousel-bullets');
 
-const setSlide = (targetElement, slide) => {
-    var activeElement = document.querySelector('.vanillajs-carousel .item.active');
+const vanilla = {
+    bodyWidth: document.body.offsetWidth,
+    slide: null,
+    carouselItems: document.querySelectorAll('.vanillajs-carousel .item'),
+    carouselWrapper: document.querySelector('.vanillajs-carousel'),
+    carouselButtons: document.querySelectorAll('.vanillajs-carousel-controls'),
+    carouselBulletsWrapper: document.querySelector('.vanillajs-carousel-bullets'),
+    carouselItemsNumber() {
+        return this.carouselItems.length;
+    },
+    setBullet(index) {
+        const eqBulletElement = document.querySelector('.vanillajs-carousel-bullet-' + index);
 
-    targetElement.classList.add('active');
-    activeElement.classList.remove('active');
-    carouselWrapper.style.transform = 'translate(' + ((bodyWidth * slide) * -1) + 'px)';
-    carouselWrapper.dataset.slide = slide;
-    setBullet(slide);
-}
+        if (document.querySelector('.vanillajs-carousel-bullets a.active')) {
+            document.querySelector('.vanillajs-carousel-bullets a.active').classList.remove('active');
+        }
 
-const setBullet = (index) => {
-    var eqBulletElement = document.querySelector('.vanillajs-carousel-bullet-' + index);
+        eqBulletElement.classList.add('active');
+    },
+    setSlide(target, slide) {
+        const activeElement = document.querySelector('.vanillajs-carousel .item.active');
 
-    if (document.querySelector('.vanillajs-carousel-bullets a.active')) {
-        document.querySelector('.vanillajs-carousel-bullets a.active').classList.remove('active');
-    }
+        target.classList.add('active');
+        activeElement.classList.remove('active');
+        this.carouselWrapper.style.transform = `translate(${(this.bodyWidth * slide) * -1}px)`;
+        this.carouselWrapper.dataset.slide = slide;
+        this.setBullet(slide);
+    },
+    setCarousel() {
 
-    eqBulletElement.classList.add('active')
-}
+        this.carouselWrapper.style.width = (`${this.bodyWidth * this.carouselItemsNumber()}px`);
 
-const setCarousel = () => {
-    var i;
+        Object.entries(this.carouselItems).map(([key]) => {
+            const bullet = document.createElement('a');
+            bullet.dataset.slide = key;
+            bullet.classList.add(`vanillajs-carousel-bullet-${key}`);
+            if (key === '0') bullet.classList.add('active');
 
-    carouselWrapper.style.width = (bodyWidth * carouselItemsNumber) + 'px';
+            bullet.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                let targetElement;
+                const targetIndex = e.srcElement.dataset.slide;
+                const activeElement = document.querySelector('.vanillajs-carousel .item.active');
 
-    for (i = 0; i < carouselItemsNumber; i++) {
-        var bullet = document.createElement('a');
-        bullet.dataset.slide = i;
+                targetElement = this.carouselItems[targetIndex];
 
-        bullet.classList.add('vanillajs-carousel-bullet-' + i);
-        if (i === 0) bullet.classList.add('active');
-
-        bullet.addEventListener('click', function (e) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            var targetIndex = this.dataset.slide;
-            var targetElement;
-            var newTranslate;
-            var activeElement = document.querySelector('.vanillajs-carousel .item.active');
-
-            targetElement = carouselItems[targetIndex];
-
-            setSlide(targetElement, targetIndex);
+                this.setSlide(targetElement, targetIndex);
+            });
+            this.carouselBulletsWrapper.appendChild(bullet);
         });
-        carouselBulletsWrapper.appendChild(bullet);
-    }
 
-    for (i = 0; i < carouselButtons.length; i++) {
-        carouselButtons[i].addEventListener('click', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            var targetElement;
-            var newTranslate;
-            var action = this.dataset.control;
-            var currSlide = parseInt(carouselWrapper.dataset.slide);
-            var activeElement = document.querySelector('.vanillajs-carousel .item.active');
+        Object.entries(this.carouselButtons).map(([key, button]) => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                let targetElement;
+                const action = button.dataset.control;
+                const currSlide = parseInt(this.carouselWrapper.dataset.slide);
+                const activeElement = document.querySelector('.vanillajs-carousel .item.active');
 
-            if (action === 'next') {
-                if (activeElement.nextElementSibling) {
-                    targetElement = activeElement.nextElementSibling;
-                    slide = currSlide + 1;
-                } else {
-                    targetElement = carouselItems[0];
-                    slide = 0;
+                if (action === 'next') {
+                    if (activeElement.nextElementSibling) {
+                        targetElement = activeElement.nextElementSibling;
+                        this.slide = currSlide + 1;
+                    } else {
+                        targetElement = this.carouselItems[0];
+                        this.slide = 0;
+                    }
                 }
-            }
 
-            if (action === 'prev') {
-                if (activeElement.previousElementSibling) {
-                    targetElement = activeElement.previousElementSibling;
-                    slide = currSlide - 1;
-                } else {
-                    targetElement = carouselItems[carouselItemsNumber - 1];
-                    slide = (carouselItemsNumber - 1)
+                if (action === 'prev') {
+                    if (activeElement.previousElementSibling) {
+                        targetElement = activeElement.previousElementSibling;
+                        this.slide = currSlide - 1;
+                    } else {
+                        targetElement = this.carouselItems[this.carouselItemsNumber - 1];
+                        this.slide = (this.carouselItemsNumber - 1)
+                    }
                 }
-            }
 
-            setSlide(targetElement, slide);
+                this.setSlide(targetElement, this.slide);
+            });
         });
-    }
-}
+    },
+};

@@ -1,91 +1,98 @@
 'use strict';
 
-var slide = void 0;
-var carouselItems = document.querySelectorAll('.vanillajs-carousel .item'),
-    carouselItemsNumber = carouselItems.length,
-    carouselWrapper = document.querySelector('.vanillajs-carousel'),
-    carouselButtons = document.querySelectorAll('.vanillajs-carousel-controls'),
-    bodyWidth = document.body.offsetWidth,
-    carouselBulletsWrapper = document.querySelector('.vanillajs-carousel-bullets');
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-var setSlide = function setSlide(targetElement, slide) {
-    var activeElement = document.querySelector('.vanillajs-carousel .item.active');
+var vanilla = {
+    bodyWidth: document.body.offsetWidth,
+    slide: null,
+    carouselItems: document.querySelectorAll('.vanillajs-carousel .item'),
+    carouselWrapper: document.querySelector('.vanillajs-carousel'),
+    carouselButtons: document.querySelectorAll('.vanillajs-carousel-controls'),
+    carouselBulletsWrapper: document.querySelector('.vanillajs-carousel-bullets'),
+    carouselItemsNumber: function carouselItemsNumber() {
+        return this.carouselItems.length;
+    },
+    setBullet: function setBullet(index) {
+        var eqBulletElement = document.querySelector('.vanillajs-carousel-bullet-' + index);
 
-    targetElement.classList.add('active');
-    activeElement.classList.remove('active');
-    carouselWrapper.style.transform = 'translate(' + bodyWidth * slide * -1 + 'px)';
-    carouselWrapper.dataset.slide = slide;
-    setBullet(slide);
-};
+        if (document.querySelector('.vanillajs-carousel-bullets a.active')) {
+            document.querySelector('.vanillajs-carousel-bullets a.active').classList.remove('active');
+        }
 
-var setBullet = function setBullet(index) {
-    var eqBulletElement = document.querySelector('.vanillajs-carousel-bullet-' + index);
+        eqBulletElement.classList.add('active');
+    },
+    setSlide: function setSlide(target, slide) {
+        var activeElement = document.querySelector('.vanillajs-carousel .item.active');
 
-    if (document.querySelector('.vanillajs-carousel-bullets a.active')) {
-        document.querySelector('.vanillajs-carousel-bullets a.active').classList.remove('active');
-    }
+        target.classList.add('active');
+        activeElement.classList.remove('active');
+        this.carouselWrapper.style.transform = 'translate(' + this.bodyWidth * slide * -1 + 'px)';
+        this.carouselWrapper.dataset.slide = slide;
+        this.setBullet(slide);
+    },
+    setCarousel: function setCarousel() {
+        var _this = this;
 
-    eqBulletElement.classList.add('active');
-};
+        this.carouselWrapper.style.width = this.bodyWidth * this.carouselItemsNumber() + 'px';
 
-var setCarousel = function setCarousel() {
-    var i;
+        Object.entries(this.carouselItems).map(function (_ref) {
+            var _ref2 = _slicedToArray(_ref, 1),
+                key = _ref2[0];
 
-    carouselWrapper.style.width = bodyWidth * carouselItemsNumber + 'px';
+            var bullet = document.createElement('a');
+            bullet.dataset.slide = key;
+            bullet.classList.add('vanillajs-carousel-bullet-' + key);
+            if (key === '0') bullet.classList.add('active');
 
-    for (i = 0; i < carouselItemsNumber; i++) {
-        var bullet = document.createElement('a');
-        bullet.dataset.slide = i;
+            bullet.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                var targetElement = void 0;
+                var targetIndex = e.srcElement.dataset.slide;
+                var activeElement = document.querySelector('.vanillajs-carousel .item.active');
 
-        bullet.classList.add('vanillajs-carousel-bullet-' + i);
-        if (i === 0) bullet.classList.add('active');
+                targetElement = _this.carouselItems[targetIndex];
 
-        bullet.addEventListener('click', function (e) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            var targetIndex = this.dataset.slide;
-            var targetElement;
-            var newTranslate;
-            var activeElement = document.querySelector('.vanillajs-carousel .item.active');
-
-            targetElement = carouselItems[targetIndex];
-
-            setSlide(targetElement, targetIndex);
+                _this.setSlide(targetElement, targetIndex);
+            });
+            _this.carouselBulletsWrapper.appendChild(bullet);
         });
-        carouselBulletsWrapper.appendChild(bullet);
-    }
 
-    for (i = 0; i < carouselButtons.length; i++) {
-        carouselButtons[i].addEventListener('click', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            var targetElement;
-            var newTranslate;
-            var action = this.dataset.control;
-            var currSlide = parseInt(carouselWrapper.dataset.slide);
-            var activeElement = document.querySelector('.vanillajs-carousel .item.active');
+        Object.entries(this.carouselButtons).map(function (_ref3) {
+            var _ref4 = _slicedToArray(_ref3, 2),
+                key = _ref4[0],
+                button = _ref4[1];
 
-            if (action === 'next') {
-                if (activeElement.nextElementSibling) {
-                    targetElement = activeElement.nextElementSibling;
-                    slide = currSlide + 1;
-                } else {
-                    targetElement = carouselItems[0];
-                    slide = 0;
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var targetElement = void 0;
+                var action = button.dataset.control;
+                var currSlide = parseInt(_this.carouselWrapper.dataset.slide);
+                var activeElement = document.querySelector('.vanillajs-carousel .item.active');
+
+                if (action === 'next') {
+                    if (activeElement.nextElementSibling) {
+                        targetElement = activeElement.nextElementSibling;
+                        _this.slide = currSlide + 1;
+                    } else {
+                        targetElement = _this.carouselItems[0];
+                        _this.slide = 0;
+                    }
                 }
-            }
 
-            if (action === 'prev') {
-                if (activeElement.previousElementSibling) {
-                    targetElement = activeElement.previousElementSibling;
-                    slide = currSlide - 1;
-                } else {
-                    targetElement = carouselItems[carouselItemsNumber - 1];
-                    slide = carouselItemsNumber - 1;
+                if (action === 'prev') {
+                    if (activeElement.previousElementSibling) {
+                        targetElement = activeElement.previousElementSibling;
+                        _this.slide = currSlide - 1;
+                    } else {
+                        targetElement = _this.carouselItems[_this.carouselItemsNumber - 1];
+                        _this.slide = _this.carouselItemsNumber - 1;
+                    }
                 }
-            }
 
-            setSlide(targetElement, slide);
+                _this.setSlide(targetElement, _this.slide);
+            });
         });
     }
 };
