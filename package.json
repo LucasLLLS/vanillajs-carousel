@@ -1,6 +1,6 @@
 {
   "name": "vanillajs-carousel",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A useful carousel with vanilla JS",
   "main": "vanillajs-carousel.js",
   "scripts": {
